@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/heladera")
-public class DatosController {
+public class DataController {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -22,4 +22,3 @@ public class DatosController {
                 .orElse("No data available");
     }
 }
-

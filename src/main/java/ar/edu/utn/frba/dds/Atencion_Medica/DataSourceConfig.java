@@ -1,39 +1,48 @@
 package ar.edu.utn.frba.dds.Atencion_Medica;
-import javax.sql.DataSource;
 
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfig {
-        // DataSource para la BD del proyecto
+
+        // Configuración de la base de datos Master
         @Bean(name = "masterDataSource")
-        @ConfigurationProperties(prefix = "spring.datasource.master")
+        @Primary
         public DataSource masterDataSource() {
-            return DataSourceBuilder.create().build();
+                HikariDataSource dataSource = new HikariDataSource();
+                dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_master?serverTimezone=UTC");
+                dataSource.setUsername("prueba");
+                dataSource.setPassword("1234");
+                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                return dataSource;
         }
 
-        // JdbcTemplate para la BD del proyecto
         @Bean(name = "jdbcTemplateMaster")
-        public JdbcTemplate jdbcTemplateMaster(@Qualifier("masterDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+        @Primary
+        public JdbcTemplate jdbcTemplateMaster(@Qualifier("masterDataSource") DataSource masterDataSource) {
+                return new JdbcTemplate(masterDataSource);
         }
 
-
-        // DataSource para la BD del servicio
+        // Configuración de la base de datos Slave
         @Bean(name = "slaveDataSource")
-        @ConfigurationProperties(prefix = "spring.datasource.slave")
         public DataSource slaveDataSource() {
-            return DataSourceBuilder.create().build();
+                HikariDataSource dataSource = new HikariDataSource();
+                dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_slave?serverTimezone=UTC");
+                dataSource.setUsername("prueba");
+                dataSource.setPassword("1234");
+                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                return dataSource;
         }
 
-        // JdbcTemplate para la BD del servicio
         @Bean(name = "jdbcTemplateSlave")
-        public JdbcTemplate jdbcTemplateSlave(@Qualifier("slaveDataSource") DataSource dataSource) {
-            return new JdbcTemplate(dataSource);
+        public JdbcTemplate jdbcTemplateSlave(@Qualifier("slaveDataSource") DataSource slaveDataSource) {
+                return new JdbcTemplate(slaveDataSource);
         }
 }

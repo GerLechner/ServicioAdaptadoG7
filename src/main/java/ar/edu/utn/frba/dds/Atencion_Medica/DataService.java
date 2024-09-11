@@ -1,5 +1,6 @@
 package ar.edu.utn.frba.dds.Atencion_Medica;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.time.LocalDate;
 import java.util.Optional;
 
+
+
 @Service
 public class DataService {
     @Autowired
@@ -20,17 +23,19 @@ public class DataService {
 
     private int reintentosFallidos = 0; // Contador de reintentos
 
-    @Scheduled(cron = "0 0 0 * * ?") // Cron para ejecutar a las 00:00 todos los días
+    @Scheduled(cron = "50 6 0 * * ?") // Cron para ejecutar a las 00:00 todos los días
     public void obtenerUsoHeladera() {
         ejecutarConsultaUsoHeladera();
     }
 
     private void ejecutarConsultaUsoHeladera() {
-        String sql = "SELECT h.localidad, p.nombre, COUNT(u.id) AS cantidad_usos " +
-                "FROM subordinated_table " +
-                "GROUP BY h.localidad, p.nombre " +
+        String sql = "SELECT ub.localidad, pv.nombre, COUNT(uh.id) AS cantidad_usos " +
+                "FROM usoheladera uh " +
+                "JOIN heladera h ON uh.heladera_id = h.id " +
+                "JOIN ubicacion ub ON h.ubicacion_id = ub.id " +
+                "JOIN personavulnerable pv ON uh.personaVulnerable_id = pv.id " +
+                "GROUP BY ub.localidad, pv.nombre " +
                 "ORDER BY cantidad_usos DESC";
-
         try {
             // Ejecuto la consulta
             List<String> resultados = jdbcTemplate.query(sql, (rs, rowNum) ->
@@ -56,11 +61,10 @@ public class DataService {
         }
     }
 
-    // Método para manejar el error y controlar los reintentos
     private void manejarErrorConsulta() {
-        if (reintentosFallidos < 3) {
+        if (reintentosFallidos < 2) {
             reintentosFallidos++;
-            System.out.println("Reintento fallido #" + reintentosFallidos + ". Volviendo a intentar en 30 minutos.");
+            System.out.println("Reintento fallido #" + reintentosFallidos + ". Volviendo a intentar en 5 minutos.");
         } else {
             System.out.println("Fallo tras 3 intentos. Usando los datos del día anterior.");
             usarDatosDeAyer();
@@ -68,7 +72,6 @@ public class DataService {
         }
     }
 
-    // Método para usar los datos de ayer
     private void usarDatosDeAyer() {
         String keyAyer = "usoHeladera:" + LocalDate.now().minusDays(1);
         Optional<String> datosAyer = Optional.ofNullable(redisTemplate.opsForValue().get(keyAyer));
@@ -82,7 +85,7 @@ public class DataService {
         }
     }
 
-    @Scheduled(cron = "0 */30 * * * ?")  // Reintentar cada 30 minutos si no hay datos
+    @Scheduled(cron = "0 */5 * * * ?")  // Reintentar cada 5 minutos si no hay datos
     public void reintentarObtenerUsoHeladera() {
         String keyHoy = "usoHeladera:" + LocalDate.now();
         String cachedData = redisTemplate.opsForValue().get(keyHoy);

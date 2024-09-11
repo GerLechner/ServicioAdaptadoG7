@@ -1,5 +1,5 @@
 package ar.edu.utn.frba.dds.Atencion_Medica;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -8,41 +8,39 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.Duration;
 import java.util.List;
-
 import java.time.LocalDate;
 import java.util.Optional;
 
-
-
 @Service
 public class DataService {
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
-    private StringRedisTemplate redisTemplate;
 
-    private int reintentosFallidos = 0; // Contador de reintentos
+    private final JdbcTemplate jdbcTemplateSlave;
+    private final StringRedisTemplate redisTemplate;
 
-    @Scheduled(cron = "50 6 0 * * ?") // Cron para ejecutar a las 00:00 todos los días
+    private int reintentosFallidos = 0;
+
+    public DataService(
+            @Qualifier("jdbcTemplateSlave") JdbcTemplate jdbcTemplateSlave,
+            @Qualifier("redisTemplate")StringRedisTemplate redisTemplate) {
+        this.jdbcTemplateSlave = jdbcTemplateSlave;
+        this.redisTemplate = redisTemplate;
+    }
+    @Scheduled(cron = "47 17 0 * * ?") // Cron para ejecutar a las 00:00 todos los días
     public void obtenerUsoHeladera() {
         ejecutarConsultaUsoHeladera();
     }
 
-    private void ejecutarConsultaUsoHeladera() {
-        String sql = "SELECT ub.localidad, pv.nombre, COUNT(uh.id) AS cantidad_usos " +
-                "FROM usoheladera uh " +
-                "JOIN heladera h ON uh.heladera_id = h.id " +
-                "JOIN ubicacion ub ON h.ubicacion_id = ub.id " +
-                "JOIN personavulnerable pv ON uh.personaVulnerable_id = pv.id " +
-                "GROUP BY ub.localidad, pv.nombre " +
-                "ORDER BY cantidad_usos DESC";
+    public void ejecutarConsultaUsoHeladera() {
+        String sql = "SELECT localidad, nombres_personas, cantidad_personas " +
+                "FROM uso_heladera_resumen " +
+                "ORDER BY cantidad_personas DESC";
         try {
             // Ejecuto la consulta
-            List<String> resultados = jdbcTemplate.query(sql, (rs, rowNum) ->
-                    String.format("Localidad: %s, Persona: %s, Usos: %d",
+            List<String> resultados = jdbcTemplateSlave.query(sql, (rs, rowNum) ->
+                    String.format("Localidad: %s, Personas: %s, Cantidad de personas: %d",
                             rs.getString("localidad"),
-                            rs.getString("nombre"),
-                            rs.getInt("cantidad_usos"))
+                            rs.getString("nombres_personas"),
+                            rs.getInt("cantidad_personas"))
             );
 
             // Si hay resultados, los guardamos en Redis con expiración de 26 horas

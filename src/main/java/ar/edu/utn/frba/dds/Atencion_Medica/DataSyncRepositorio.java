@@ -20,25 +20,42 @@ public class DataSyncRepositorio {
         this.jdbcTemplateSlave = jdbcTemplateSlave;
     }
 
+    // Crea la tabla si no existe
+    public void ensureTableExists() {
+        String createTableSql = "CREATE TABLE IF NOT EXISTS uso_heladera_resumen (" +
+                "localidad VARCHAR(255), " +
+                "cantidad_personas INT, " +
+                "nombres_personas TEXT)";
+        jdbcTemplateSlave.update(createTableSql);
+    }
+
+    // Obtiene datos de la base de datos principal
     public List<Map<String, Object>> getDataMaster() {
-        String sql = "SELECT u.fechaHora AS fecha, pv.nombre AS nombre, pv.apellido AS apellido, ub.localidad AS localidad " +
+        String sql = "SELECT " +
+                "ub.localidad AS localidad, " +
+                "COUNT(DISTINCT pv.id) AS cantidad_personas, " +
+                "GROUP_CONCAT(DISTINCT CONCAT(pv.nombre, ' ', pv.apellido) SEPARATOR ', ') AS nombres_personas " +
                 "FROM usoheladera u " +
                 "JOIN heladera h ON u.heladera_id = h.id " +
                 "JOIN ubicacion ub ON h.ubicacion_id = ub.id " +
-                "JOIN personavulnerable pv ON u.personaVulnerable_id = pv.id";
-
+                "JOIN personavulnerable pv ON u.personaVulnerable_id = pv.id " +
+                "GROUP BY ub.localidad " +
+                "ORDER BY cantidad_personas DESC";
         return jdbcTemplateMaster.queryForList(sql);
     }
 
+    // Inserta datos en la base de datos secundaria
     public void insertDataToSlave(List<Map<String, Object>> data) {
-        String sql = "INSERT INTO uso_heladera_resumen (localidad, persona_vulnerable, cantidad_usos) VALUES (?, ?, ?)";
+        ensureTableExists(); // Asegúrate de que la tabla existe antes de insertar
+        String sql = "INSERT INTO uso_heladera_resumen (localidad, cantidad_personas, nombres_personas) VALUES (?, ?, ?)";
         for (Map<String, Object> row : data) {
-            jdbcTemplateSlave.update(sql, row.get("localidad"), row.get("persona_vulnerable"), row.get("cantidad_usos"));
+            jdbcTemplateSlave.update(sql, row.get("localidad"), row.get("cantidad_personas"), row.get("nombres_personas"));
         }
     }
 
+    // Borra los datos de la tabla secundaria
     public void clearSlaveTable() {
-        String sql = "DELETE FROM uso_heladera_resumen";
+        String sql = "DROP TABLE IF EXISTS uso_heladera_resumen";
         jdbcTemplateSlave.update(sql);
     }
 }

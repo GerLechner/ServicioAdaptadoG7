@@ -11,11 +11,10 @@ public class DataSyncService {
     @Autowired
     private DataSyncRepositorio dataSyncRepository;
 
-    @Scheduled(cron = "0 50 6 * * ?") // TODOS LOS DIAS A LAS 23:50
+    @Scheduled(cron = "0 18 12 * * ?") // TODOS LOS DIAS A LAS 23:50
     public void synchronizeData() {
         List<Map<String, Object>> dataFromPrimary = dataSyncRepository.getDataMaster();
         dataSyncRepository.clearSlaveTable();
         dataSyncRepository.insertDataToSlave(dataFromPrimary);
     }
 }
-

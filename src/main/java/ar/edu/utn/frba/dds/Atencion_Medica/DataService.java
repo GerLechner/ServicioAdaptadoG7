@@ -37,7 +37,7 @@ public class DataService {
         try {
             // Ejecuto la consulta
             List<String> resultados = jdbcTemplateSlave.query(sql, (rs, rowNum) ->
-                    String.format("Localidad: %s, Personas: %s, Cantidad de personas: %d",
+                    String.format("{Localidad: %s, Personas: %s, Cantidad de personas: %d}",
                             rs.getString("localidad"),
                             rs.getString("nombres_personas"),
                             rs.getInt("cantidad_personas"))

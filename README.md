@@ -5,9 +5,10 @@ La ONG a cargo del sistema tiene un programa que se dedica a brindar atención m
 Es por eso que se nos solicitó los datos de las personas que tenemos registradas para realizar sus circuitos. Diariamente, se ejecutará este servicio y se espera que el mismo retorne una lista de las localidades con la cantidad de personas que tenemos registradas como en situación de calle que solicitaron al menos una vianda en ese barrio. Además, los médicos nos solicitaron saber también el nombre de aquellas personas.
 
 ### Configuracion
-Recomendamos utilizar el archivo .sql para la creacion de las bases de datos necesarias.
-Una vez creadas las bases de datos, se deben modificar los datos del archivo "application.properties" y "DataSourceConfig" con la informacion necesaria para conectarse (puertos, usuario, contraseña).
-Como ultimo paso, recomendamos modificar el tiempo de ejecucion de los CronJobs para que se ejecuten las funciones inicialmente (DataService.java, DataSyncService.java), inicialmente pueden ejecutarla cada 5 segundos ("*/5 * * * * ?") para comprobar el funcionamiento.
+- Instalar Redis https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-windows/ para correcto funcionamiento de la cache 
+- Recomendamos utilizar el archivo .sql para la creacion de las bases de datos necesarias.
+- Una vez creadas las bases de datos, se deben modificar los datos del archivo "application.properties" y "DataSourceConfig" con la informacion necesaria para conectarse (puertos, usuario, contraseña).
+- Como ultimo paso, recomendamos modificar el tiempo de ejecucion de los CronJobs para que se ejecuten las funciones inicialmente (DataService.java, DataSyncService.java), inicialmente pueden ejecutarla cada 5 segundos ("*/5 * * * * ?") para comprobar el funcionamiento.
 
 ### Endpoints
 
@@ -41,3 +42,6 @@ Ejemplo:
     }
 ]
 ```
+
+
+@camilabarrosalbarracin

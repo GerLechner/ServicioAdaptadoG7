@@ -6,7 +6,7 @@ Es por eso que se nos solicitó los datos de las personas que tenemos registrada
 
 ### Configuracion
 Recomendamos utilizar el archivo .sql para la creacion de las bases de datos necesarias.
-Una vez creadas las bases de datos, se deben modificar los datos del archivo "application.properties" con la informacion necesaria para conectarse (puertos, usuario, contraseña).
+Una vez creadas las bases de datos, se deben modificar los datos del archivo "application.properties" y "DataSourceConfig" con la informacion necesaria para conectarse (puertos, usuario, contraseña).
 Como ultimo paso, recomendamos modificar el tiempo de ejecucion de los CronJobs para que se ejecuten las funciones inicialmente (DataService.java, DataSyncService.java), inicialmente pueden ejecutarla cada 5 segundos ("*/5 * * * * ?") para comprobar el funcionamiento.
 
 ### Endpoints

@@ -23,8 +23,8 @@ Este endpoint devuelve una lista de localidades con el número de personas en si
 Un array JSON de objetos, cada uno conteniendo:
 
 - `localidad`: La localidad.
+- `personas`: Los nombres de esas personas separados por comas (,).
 - `cantidad_personas`: El número de personas en situación de calle que solicitaron al menos una vianda en ese barrio.
-- `nombres_personas`: Los nombres de esas personas separados por comas (,).
 
 Ejemplo:
 
@@ -32,16 +32,16 @@ Ejemplo:
 [
     {
         "localidad": "Buenos Aires",
-        "cantidad_personas": 2,
-        "nombres_personas": "Gonzalo Carrizo, Lautaro Petronacci"
+        "personas": "Gonzalo Carrizo, Lautaro Petronacci",
+        "cantidad_personas": 2
     },
     {
-        "localidad": "Cordoba",
+        "localidad": "Cordoba"
+        "personas": "Sicher Matias, Federico Bietti, Martin Ibarra",
         "cantidad_personas": 3,
-        "nombres_personas": "Sicher Matias, Federico Bietti, Martin Ibarra"
     }
 ]
 ```
 
-
+Agradecimientos por las pruebas que nos sirvieron para corregir:
 @camilabarrosalbarracin

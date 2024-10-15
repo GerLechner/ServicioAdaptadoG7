@@ -37,15 +37,15 @@ public class DataService {
         try {
             // Ejecuto la consulta
             List<String> resultados = jdbcTemplateSlave.query(sql, (rs, rowNum) ->
-                    String.format("{Localidad: %s, Personas: %s, Cantidad de personas: %d}",
-                            rs.getString("localidad"),
-                            rs.getString("nombres_personas"),
+                    String.format("{\"localidad\": %s, \"personas\": %s, \"cantidad_personas\": %d}",
+                            "\""+rs.getString("localidad")+"\"",
+                            "\""+rs.getString("nombres_personas")+"\"",
                             rs.getInt("cantidad_personas"))
             );
 
             // Si hay resultados, los guardamos en Redis con expiración de 26 horas
             if (!resultados.isEmpty()) {
-                redisTemplate.opsForValue().set("usoHeladera:" + LocalDate.now(), String.join(",", resultados), Duration.ofHours(26));
+                redisTemplate.opsForValue().set("usoHeladera:" + LocalDate.now(), "[" + String.join(",", resultados) + "]", Duration.ofHours(26));
                 reintentosFallidos = 0;  // Reseteo el contador de reintentos si es exitoso
             } else {
                 // Si no hay resultados, almacenar los datos del día anterior

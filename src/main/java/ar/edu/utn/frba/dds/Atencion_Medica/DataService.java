@@ -30,6 +30,7 @@ public class DataService {
         ejecutarConsultaUsoHeladera();
     }
 
+
     public void ejecutarConsultaUsoHeladera() {
         String sql = "SELECT localidad, nombres_personas, cantidad_personas " +
                 "FROM uso_heladera_resumen " +
@@ -68,6 +69,10 @@ public class DataService {
             usarDatosDeAyer();
             reintentosFallidos = 0;  // Resetear el contador después de fallar 3 veces
         }
+    }
+
+    public void guardarDatosGenericos(String key, String data) {
+        redisTemplate.opsForValue().set(key, data, Duration.ofHours(26));
     }
 
     private void usarDatosDeAyer() {

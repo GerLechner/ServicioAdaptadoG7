@@ -20,8 +20,8 @@ public class DataSourceConfig {
         public DataSource masterDataSource() {
                 HikariDataSource dataSource = new HikariDataSource();
                 dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_master?serverTimezone=UTC");
-                dataSource.setUsername("prueba");
-                dataSource.setPassword("1234");
+                dataSource.setUsername("root");
+                dataSource.setPassword("root");
                 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 return dataSource;
         }
@@ -37,8 +37,8 @@ public class DataSourceConfig {
         public DataSource slaveDataSource() {
                 HikariDataSource dataSource = new HikariDataSource();
                 dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_slave?serverTimezone=UTC");
-                dataSource.setUsername("prueba");
-                dataSource.setPassword("1234");
+                dataSource.setUsername("root");
+                dataSource.setPassword("root");
                 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 return dataSource;
         }

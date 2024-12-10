@@ -58,4 +58,68 @@ public class DataSyncRepositorio {
         String sql = "DROP TABLE IF EXISTS uso_heladera_resumen";
         jdbcTemplateSlave.update(sql);
     }
+
+    // Métodos para insertar datos en las tablas maestras
+    public void insertPersonaVulnerable(Map<String, Object> persona) {
+        String sql = "INSERT INTO personaVulnerable (id, nombre, apellido) VALUES (?, ?, ?)";
+        jdbcTemplateMaster.update(sql, persona.get("id"), persona.get("nombre"), persona.get("apellido"));
+    }
+
+    public void insertUbicacion(Map<String, Object> ubicacion) {
+        String sql = "INSERT INTO ubicacion (id, localidad) VALUES (?, ?)";
+        jdbcTemplateMaster.update(sql, ubicacion.get("ubicacion_id"), ubicacion.get("localidad"));
+    }
+
+    public void insertHeladera(Map<String, Object> heladera) {
+        String sql = "INSERT INTO heladera (id, ubicacion_id) VALUES (?, ?)";
+        jdbcTemplateMaster.update(sql, heladera.get("id"), heladera.get("ubicacion_id"));
+    }
+
+    public void insertUsoHeladera(Map<String, Object> uso) {
+        String sql = "INSERT INTO usoHeladera (heladera_id, fechaHora, tarjeta, personaVulnerable_id) VALUES (?, ?, ?, ?)";
+        jdbcTemplateMaster.update(sql, uso.get("heladera_id"), uso.get("fechaHora"), uso.get("tarjeta_id"), uso.get("personaVulnerable_id"));
+    }
+
+    public boolean existePersona(Map<String, Object> persona) {
+        String nombre = (String) persona.get("nombre");
+        String apellido = (String) persona.get("apellido");
+
+        if (nombre == null || apellido == null) {
+            System.err.println("Datos incompletos: nombre=" + nombre + ", apellido=" + apellido);
+            return false;
+        }
+
+        System.out.println("Verificando persona: " + nombre + " " + apellido);
+
+        String sql = "SELECT COUNT(*) FROM personaVulnerable WHERE nombre = ? AND apellido = ? AND id = ?";
+        try {
+            Integer count = jdbcTemplateMaster.queryForObject(sql, Integer.class, nombre, apellido, persona.get("id"));
+            return count != null && count > 0;
+        } catch (Exception e) {
+            System.err.println("Error ejecutando consulta SQL: " + e.getMessage());
+            throw e; // O maneja el error según tu lógica
+        }
+    }
+
+    public boolean existeUbicacion(Map<String, Object> ubicacion) {
+        String sql = "SELECT COUNT(*) FROM ubicacion WHERE id = ? AND localidad = ?";
+        Integer count = jdbcTemplateMaster.queryForObject(sql, Integer.class, ubicacion.get("id"), ubicacion.get("localidad"));
+        return count != null && count > 0;
+    }
+
+    public boolean existeHeladera(Map<String, Object> heladera) {
+        String sql = "SELECT COUNT(*) FROM heladera WHERE id = ? AND ubicacion_id = ?";
+        Integer count = jdbcTemplateMaster.queryForObject(sql, Integer.class,
+                heladera.get("id"), heladera.get("ubicacion_id"));
+        return count != null && count > 0;
+    }
+
+    /*
+    public boolean existeUsoHeladera(Map<String, Object> usoHeladera) {
+        String sql = "SELECT COUNT(*) FROM usoheladera WHERE heladera_id = ? AND persona_id = ?";
+        Integer count = jdbcTemplateMaster.queryForObject(sql, Integer.class,
+                usoHeladera.get("heladera_id"), usoHeladera.get("persona_id"));
+        return count != null && count > 0;
+    }
+     */
 }

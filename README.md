@@ -1,4 +1,13 @@
+
+
+
 # Documentación de la API
+
+## Resumen
+Esta es una adaptacion del servicio creado por el grupo 12 de DDS, para el correcto funcionamiento con nuestro sistema.
+
+Repositorio Original: https://github.com/Sichermatias/2024-tpa-mi-no-grupo-12-api-rest
+
 ## Servicio 3: Atención Médica
 
 La ONG a cargo del sistema tiene un programa que se dedica a brindar atención médica a personas en situación de calle. Diariamente sale un grupo de médicos voluntarios a buscar personas que necesiten atención. Sin embargo, en algunos casos ocurre que les es difícil saber en qué barrio pueden generar el mayor impacto.
@@ -44,4 +53,4 @@ Ejemplo:
 ```
 
 Agradecimientos por las pruebas que nos sirvieron para corregir:
-@camilabarrosalbarracin
+@camilabarrosalbarracin.

@@ -28,13 +28,6 @@ CREATE TABLE IF NOT EXISTS `heladera` (
   CONSTRAINT `heladera_ibfk_1` FOREIGN KEY (`ubicacion_id`) REFERENCES `ubicacion` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla dds_master.heladera: ~4 rows (aproximadamente)
-INSERT INTO `heladera` (`id`, `ubicacion_id`) VALUES
-	(1, 1),
-	(2, 2),
-	(3, 3),
-	(4, 4);
-
 -- Volcando estructura para tabla dds_master.personavulnerable
 CREATE TABLE IF NOT EXISTS `personavulnerable` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -43,31 +36,12 @@ CREATE TABLE IF NOT EXISTS `personavulnerable` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla dds_master.personavulnerable: ~9 rows (aproximadamente)
-INSERT INTO `personavulnerable` (`id`, `nombre`, `apellido`) VALUES
-	(1, 'Juan', 'Pérez'),
-	(2, 'María', 'Gómez'),
-	(3, 'Carlos', 'Díaz'),
-	(4, 'Ana', 'López'),
-	(5, 'Juan', 'Pérez'),
-	(6, 'Ana', 'González'),
-	(7, 'María', 'López'),
-	(8, 'Carlos', 'Martínez'),
-	(9, 'Lucía', 'Rodríguez');
-
 -- Volcando estructura para tabla dds_master.ubicacion
 CREATE TABLE IF NOT EXISTS `ubicacion` (
   `id` int NOT NULL AUTO_INCREMENT,
   `localidad` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Volcando datos para la tabla dds_master.ubicacion: ~4 rows (aproximadamente)
-INSERT INTO `ubicacion` (`id`, `localidad`) VALUES
-	(1, 'Buenos Aires'),
-	(2, 'Córdoba'),
-	(3, 'Rosario'),
-	(4, 'Mendoza');
 
 -- Volcando estructura para tabla dds_master.usoheladera
 CREATE TABLE IF NOT EXISTS `usoheladera` (
@@ -83,24 +57,6 @@ CREATE TABLE IF NOT EXISTS `usoheladera` (
   CONSTRAINT `usoheladera_ibfk_2` FOREIGN KEY (`personaVulnerable_id`) REFERENCES `personavulnerable` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla dds_master.usoheladera: ~14 rows (aproximadamente)
-INSERT INTO `usoheladera` (`id`, `heladera_id`, `fechaHora`, `tarjeta`, `personaVulnerable_id`) VALUES
-	(1, 1, '2024-09-01 12:30:00', '1234-5678-9101', 1),
-	(2, 2, '2024-09-02 14:45:00', '2345-6789-1012', 2),
-	(3, 3, '2024-09-03 16:20:00', '3456-7890-1123', 3),
-	(4, 4, '2024-09-04 11:10:00', '4567-8901-1234', 4),
-	(5, 1, '2024-09-05 13:50:00', '5678-9012-1345', 1),
-	(6, 2, '2024-09-06 15:30:00', '6789-0123-1456', 2),
-	(7, 1, '2024-09-01 12:00:00', 'Tarjeta1', 1),
-	(8, 1, '2024-09-01 13:00:00', 'Tarjeta2', 2),
-	(9, 1, '2024-09-02 09:30:00', 'Tarjeta3', 3),
-	(10, 2, '2024-09-01 14:00:00', 'Tarjeta4', 4),
-	(11, 2, '2024-09-03 11:15:00', 'Tarjeta5', 5),
-	(12, 3, '2024-09-01 10:00:00', 'Tarjeta6', 1),
-	(13, 4, '2024-09-02 16:00:00', 'Tarjeta7', 2),
-	(14, 4, '2024-09-02 17:30:00', 'Tarjeta8', 3);
-
-
 -- Volcando estructura de base de datos para dds_slave
 CREATE DATABASE IF NOT EXISTS `dds_slave` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `dds_slave`;
@@ -113,11 +69,6 @@ CREATE TABLE IF NOT EXISTS `uso_heladera_resumen` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla dds_slave.uso_heladera_resumen: ~4 rows (aproximadamente)
-INSERT INTO `uso_heladera_resumen` (`localidad`, `cantidad_personas`, `nombres_personas`) VALUES
-	('Buenos Aires', 3, 'Carlos Díaz, Juan Pérez, María Gómez'),
-	('Córdoba', 3, 'Ana López, Juan Pérez, María Gómez'),
-	('Mendoza', 3, 'Ana López, Carlos Díaz, María Gómez'),
-	('Rosario', 2, 'Carlos Díaz, Juan Pérez');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

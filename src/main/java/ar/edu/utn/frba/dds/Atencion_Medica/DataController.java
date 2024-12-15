@@ -1,10 +1,14 @@
 package ar.edu.utn.frba.dds.Atencion_Medica;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,22 +27,34 @@ public class DataController {
         // Obtener los datos de hoy (Si no cambiar fecha)
         String key = "usoHeladera:" + LocalDate.now();
         return Optional.ofNullable(redisTemplate.opsForValue().get(key))
-                .orElse("No data available");
+                .orElse("No data available"); // un desastre
     }
 
 
     @PostMapping("/integracion")
     public ResponseEntity<String> procesarDatos(@RequestBody Map<String, Object> payload) {
+
         try {
-            List<Map<String, Object>> personas = (List<Map<String, Object>>) payload.get("personas");
-            List<Map<String, Object>> heladeras = (List<Map<String, Object>>) payload.get("heladeras");
-            List<Map<String, Object>> ubicaciones = (List<Map<String, Object>>) payload.get("ubicaciones");
-            List<Map<String, Object>> usosHeladeras = (List<Map<String, Object>>) payload.get("usosHeladeras");
+
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonReceived = mapper.writeValueAsString(payload);
+            System.out.println("JSON recibido en el servidor: " + jsonReceived);
+
+            List<Map<String, Object>> personas = (List<Map<String, Object>>) payload.getOrDefault("personas", new ArrayList<>());
+            List<Map<String, Object>> heladeras = (List<Map<String, Object>>) payload.getOrDefault("heladeras", new ArrayList<>());
+            List<Map<String, Object>> ubicaciones = (List<Map<String, Object>>) payload.getOrDefault("ubicaciones", new ArrayList<>());
+            List<Map<String, Object>> usosHeladeras = (List<Map<String, Object>>) payload.getOrDefault("usosDeTarjeta", new ArrayList<>());
 
             // Persistir en base de datos (usando tu repositorio personalizado)
             for (Map<String, Object> persona : personas) {
-                if (!dataSyncRepositorio.existePersona(persona)) {
-                    dataSyncRepositorio.insertPersonaVulnerable(persona);
+                try {
+                    if (!dataSyncRepositorio.existePersona(persona)) {
+                        dataSyncRepositorio.insertPersonaVulnerable(persona);
+                    }
+                    System.out.print("Entra 1");
+                } catch (Exception ex) {
+                    System.err.println("Error al procesar persona: " + persona);
+                    ex.printStackTrace();
                 }
             }
 
@@ -55,12 +71,10 @@ public class DataController {
             }
 
             for (Map<String, Object> usoHeladera : usosHeladeras) {
-                /*
-                if (!dataSyncRepositorio.existeUsoHeladera(usoHeladera)) {
-                }
-                 */
-                dataSyncRepositorio.insertUsoHeladera(usoHeladera);
 
+                if (!dataSyncRepositorio.existeUsoHeladera(usoHeladera)) {
+                    dataSyncRepositorio.insertUsoHeladera(usoHeladera);
+                }
             }
 
             return ResponseEntity.ok("Datos procesados y almacenados con éxito.");

@@ -19,9 +19,9 @@ public class DataSourceConfig {
         @Primary
         public DataSource masterDataSource() {
                 HikariDataSource dataSource = new HikariDataSource();
-                dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_master?serverTimezone=UTC");
-                dataSource.setUsername("root");
-                dataSource.setPassword("root");
+                dataSource.setJdbcUrl("jdbc:mysql://dds-mysql.cfqgkykgwkz2.sa-east-1.rds.amazonaws.com:3306/dds_master?serverTimeZone=America/Argentina/Buenos_Aires");
+                dataSource.setUsername("admin");
+                dataSource.setPassword("ElPistolero23");
                 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 return dataSource;
         }
@@ -36,9 +36,9 @@ public class DataSourceConfig {
         @Bean(name = "slaveDataSource")
         public DataSource slaveDataSource() {
                 HikariDataSource dataSource = new HikariDataSource();
-                dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/dds_slave?serverTimezone=UTC");
-                dataSource.setUsername("root");
-                dataSource.setPassword("root");
+                dataSource.setJdbcUrl("jdbc:mysql://dds-mysql.cfqgkykgwkz2.sa-east-1.rds.amazonaws.com:3306/dds_slave?serverTimeZone=America/Argentina/Buenos_Aires");
+                dataSource.setUsername("admin");
+                dataSource.setPassword("ElPistolero23");
                 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 return dataSource;
         }

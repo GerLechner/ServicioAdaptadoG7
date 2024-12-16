@@ -62,7 +62,7 @@ public class DataSyncRepositorio {
     // Métodos para insertar datos en las tablas maestras
     public void insertPersonaVulnerable(Map<String, Object> persona) {
         if(!persona.isEmpty()) {
-            String sql = "INSERT INTO personaVulnerable (id, nombre, apellido) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO personavulnerable (id, nombre, apellido) VALUES (?, ?, ?)";
             jdbcTemplateMaster.update(sql, persona.get("id"), persona.get("nombre"), persona.get("apellido"));
         }
         System.out.println("no hay personas para insertar");
@@ -84,7 +84,7 @@ public class DataSyncRepositorio {
 
     public void insertUsoHeladera(Map<String, Object> uso) {
         if(!uso.isEmpty()) {
-            String sql = "INSERT INTO usoHeladera (id, heladera_id, fechaHora, tarjeta, personaVulnerable_id) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO usoheladera (id, heladera_id, fechaHora, tarjeta, personaVulnerable_id) VALUES (?, ?, ?, ?, ?)";
             jdbcTemplateMaster.update(sql, uso.get("id"), uso.get("heladera_id"), uso.get("fechaHora"), uso.get("tarjeta_id"), uso.get("personaVulnerable_id"));
         }
         System.out.println("no hay usos para insertar");
@@ -101,7 +101,7 @@ public class DataSyncRepositorio {
 
         System.out.println("Verificando persona: " + nombre + " " + apellido);
 
-        String sql = "SELECT COUNT(*) FROM personaVulnerable WHERE id = ?";
+        String sql = "SELECT COUNT(*) FROM personavulnerable WHERE id = ?";
         try {
             Integer count = jdbcTemplateMaster.queryForObject(sql, Integer.class, persona.get("id"));
             return count != null && count > 0;
